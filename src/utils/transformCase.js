@@ -11,6 +11,6 @@ export const toCamelCase = (obj) => {
       return result;
     }, {});
   }
-  // 객체도 배열도 아닌 경우, 원본 값을 반환
+  // 객체도 배열도 아닌 경우, 원본 값을 반환y
   return obj;
 };

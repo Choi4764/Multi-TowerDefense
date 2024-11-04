@@ -1,5 +1,5 @@
 import pools from '../database.js';
-import { SQL_QUERIES } from './user.queries.js';
+import { SQL_QUERIES } from '../sql.queries.js';
 import { toCamelCase } from '../../utils/transformCase.js';
 
 export const findUserById = async (userId) => {

@@ -63,7 +63,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     const { damage } = payload.monsterAttackBaseRequest;
 
     // console.log(`몬스터 데미지 : ${damage}`);
-    
+
     const user = getUserBySocket(socket);
     let baseHp = user.getGameData().getDamageBaseHp(damage);
 
@@ -95,9 +95,8 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     opponentUser.socket.write(enemyBaseHpResponse);
 
     if (baseHp <= 0) {
+      console.log('게임 패배 및 승리 이벤트 !');
 
-      console.log("게임 패배 및 승리 이벤트 !");
-      
       const gameOverNotfication = createResponse(
         {
           gameOverNotification: {
@@ -106,7 +105,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
         },
         PACKET_TYPE.GAME_OVER_NOTIFICATION,
       );
-      
+
       socket.write(gameOverNotfication);
 
       const enemyGameOverNotfication = createResponse(

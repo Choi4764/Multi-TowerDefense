@@ -12,5 +12,6 @@ CREATE TABLE Record (
     userId INT,
     opponentId INT NOT NULL,
     isWin BOOL NOT NULL,
+    gamedate DATETIME NOT NULL,
     FOREIGN KEY (userId) REFERENCES `User`(id)
 );

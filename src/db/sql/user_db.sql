@@ -1,4 +1,4 @@
-CREATE TABLE User (
+CREATE TABLE `User` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(30) NOT NULL,
     userId VARCHAR(20) NOT NULL,
@@ -12,5 +12,5 @@ CREATE TABLE Record (
     userId INT,
     opponentId INT NOT NULL,
     isWin BOOL NOT NULL,
-    FOREIGN KEY (userId) REFERENCES User(id)
+    FOREIGN KEY (userId) REFERENCES `User`(id)
 );

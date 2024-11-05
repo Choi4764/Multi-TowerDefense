@@ -14,7 +14,7 @@ export const loadProto = () => {
     GamePacket = root.lookupType('GamePacket');
     if (GamePacket) {
       console.log('GamePacket 로드 성공');
-      console.log(GamePacket);
+      console.log(GamePacket.lookupType('S2CRegisterResponse'));
     }
   });
 };

@@ -72,6 +72,7 @@ export const getPacketTypeName = (packetType) => {
 import userRegisterHandler from '../handler/user/userRegister.handler.js';
 >>>>>>> e173aaa (update: 회원가입 기능)
 import { GamePacket } from '../init/loadProto.js';
+import { getHandlerByPacketType } from '../handler/index.js';
 
 export const onData = (socket) => async (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
@@ -118,15 +119,22 @@ export const onData = (socket) => async (data) => {
     try {
       // 모든 패킷을 GamePacket으로 처리 가능
       const decodedPacket = GamePacket.decode(payload);
-      switch (packetType) {
-        case PACKET_TYPE.REGISTER_REQUEST:
-          console.log(decodedPacket.registerRequest);
-          await userRegisterHandler(socket, decodedPacket.registerRequest);
-          break;
-        case PACKET_TYPE.LOGIN_REQUEST:
-          await userLoginhandler(socket, decodedPacket.loginRequest);
-          break;
+      const handler = getHandlerByPacketType(packetType);
+      if (handler) {
+        handler(socket, decodedPacket);
       }
+      // switch (packetType) {
+      //   case PACKET_TYPE.REGISTER_REQUEST:
+      //     console.log(decodedPacket.registerRequest);
+      //     await userRegisterHandler(socket, decodedPacket.registerRequest);
+      //     break;
+      //   case PACKET_TYPE.LOGIN_REQUEST:
+      //     await userLoginhandler(socket, decodedPacket.loginRequest);
+      //     break;
+      //   case PACKET_TYPE.MATCH_REQUEST:
+      //     console.log('매치 요청 들어옴');
+      //     break;
+      // }
     } catch (err) {
       console.error('패킷 처리 에러:', err);
     }

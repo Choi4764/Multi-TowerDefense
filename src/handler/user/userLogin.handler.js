@@ -6,19 +6,22 @@ import { findUserById } from '../../db/user/user.db.js';
 // TODO: DB에서 유저 확인 후 비밀번호 체크
 const userLoginHandler = async (socket, payload) => {
   try {
-    const { id, password } = payload;
+    const { id, password } = payload.loginRequest;
     const user = await findUserById(id);
 
     if (!user) {
       console.error(`${id} 유저가 존재하지 않습니다.`);
-      const errorResponse = createResponse({
-        loginResponse: {
-          success: false,
-          message: '유저가 존재하지 않습니다.',
-          token: '',
-          failCode: 3,
+      const errorResponse = createResponse(
+        {
+          loginResponse: {
+            success: false,
+            message: '유저가 존재하지 않습니다.',
+            token: '',
+            failCode: 3,
+          },
         },
-      });
+        PACKET_TYPE.LOGIN_RESPONSE,
+      );
       socket.write(errorResponse);
       return;
     }
@@ -26,14 +29,17 @@ const userLoginHandler = async (socket, payload) => {
     if (user.password !== password) {
       // NOTE: 비밀번호 틀림
       console.error(`${socket}: 비밀번호가 틀렸습니다.`);
-      const errorResponse = createResponse({
-        loginResponse: {
-          success: false,
-          message: '비밀번호가 틀렸습니다.',
-          token: '',
-          failCode: 3,
+      const errorResponse = createResponse(
+        {
+          loginResponse: {
+            success: false,
+            message: '비밀번호가 틀렸습니다.',
+            token: '',
+            failCode: 3,
+          },
         },
-      });
+        PACKET_TYPE.LOGIN_RESPONSE,
+      );
       socket.write(errorResponse);
       return;
     }

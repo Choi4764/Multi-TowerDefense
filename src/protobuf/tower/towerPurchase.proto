@@ -1,0 +1,25 @@
+
+syntax = "proto3";
+
+package towerPurchase;
+
+//타워 구입 요청 메시지
+message C2STowerPurchaseRequest{
+    float x = 1;
+    float y = 2;
+}
+
+//타워 구입 응답 메시지
+message S2CTowerPurchaseResponse{
+    int32 towerId =1;
+}
+
+//상대 타워 구입 알림
+message S2CAddEnemyTowerNotification{
+    int32 towerId =1;
+    float x = 2;
+    float y = 3;
+}
+
+
+

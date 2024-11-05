@@ -124,7 +124,7 @@ export const onData = (socket) => async (data) => {
           await userRegisterHandler(socket, decodedPacket.registerRequest);
           break;
         case PACKET_TYPE.LOGIN_REQUEST:
-          // userLoginHandler(decodedPacket.loginRequest);
+          await userLoginhandler(socket, decodedPacket.loginRequest);
           break;
       }
     } catch (err) {

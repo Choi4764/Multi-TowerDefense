@@ -1,13 +1,9 @@
 import { createUser, findUserById } from '../../db/user/user.db.js';
-import createHeader from '../../utils/createHeader.js';
-import { GamePacket } from '../../init/loadProto.js';
+import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 
-// TODO: DB 작업해주고, Response 생성해주고 해당 Response 반환
-// payload로 id, password, email 들어옴
+// TODO: email 검증, id 길이 검증, password 암호화
 const userRegisterHandler = async (socket, payload) => {
-  console.log(payload);
-  console.log(socket);
   try {
     const { id, password, email } = payload;
     const user = await findUserById(id);
@@ -37,25 +33,11 @@ const userRegisterHandler = async (socket, payload) => {
       },
     };
 
-    const response = createResponse(responsePayload);
+    const response = createResponse(responsePayload, PACKET_TYPE.REGISTER_RESPONSE);
     socket.write(response);
   } catch (err) {
     throw new Error(err);
   }
-};
-
-const createResponse = (responsePayload) => {
-  console.log(responsePayload);
-  const payloadBuffer = GamePacket.encode(GamePacket.create(responsePayload)).finish();
-  console.log(payloadBuffer);
-  const header = createHeader(
-    payloadBuffer.length,
-    PACKET_TYPE.REGISTER_RESPONSE,
-    0, // user.sequence로 바꿔야 함
-  );
-
-  console.log('response 생성 성공');
-  return Buffer.concat([header, payloadBuffer]);
 };
 
 export default userRegisterHandler;

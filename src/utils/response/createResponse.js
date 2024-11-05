@@ -1,5 +1,5 @@
-import { GamePacket } from "../../init/loadProtos.js";
-import { createHeader } from "../createHeader.js";
+import { GamePacket } from '../../init/loadProtos.js';
+import { createHeader } from '../createHeader.js';
 
 const createResponse = (payload, packetType) => {
   const payloadBuffer = GamePacket.encode(GamePacket.create(payload)).finish();
@@ -12,4 +12,4 @@ const createResponse = (payload, packetType) => {
   return Buffer.concat([header, payloadBuffer]);
 };
 
-export default createResponse
+export default createResponse;

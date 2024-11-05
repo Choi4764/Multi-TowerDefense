@@ -6,6 +6,7 @@ import {
   PAYLOAD_LENGTH_SIZE,
 } from '../constants/header.js';
 import userRegisterHandler from '../handler/user/userRegister.handler.js';
+import userLoginhandler from '../handler/user/userLogin.handler.js';
 import { GamePacket } from '../init/loadProto.js';
 
 export const onData = (socket) => async (data) => {
@@ -59,7 +60,7 @@ export const onData = (socket) => async (data) => {
           await userRegisterHandler(socket, decodedPacket.registerRequest);
           break;
         case PACKET_TYPE.LOGIN_REQUEST:
-          // userLoginHandler(decodedPacket.loginRequest);
+          await userLoginhandler(socket, decodedPacket.loginRequest);
           break;
       }
     } catch (err) {

@@ -20,9 +20,7 @@ const createPool = (dbConfig) => {
     const date = new Date();
     console.log(
       // TODO: formatDate 추가하기
-      `[${date}] Executing query: ${sql} ${
-        params ? `, ${JSON.stringify(params)}` : ``
-      }`,
+      `[${date}] Executing query: ${sql} ${params ? `, ${JSON.stringify(params)}` : ``}`,
     );
     return originQuery.call(pool, sql, params);
   };

@@ -1,7 +1,7 @@
-  export const PACKET_TYPE_SIZE = 2;
-  export const VERSION_LENGTH_SIZE = 1;
-  export const SEQUENCE_SIZE = 4;
-  export const PAYLOAD_LENGTH_SIZE = 4;
+export const PACKET_TYPE_SIZE = 2;
+export const VERSION_LENGTH_SIZE = 1;
+export const SEQUENCE_SIZE = 4;
+export const PAYLOAD_LENGTH_SIZE = 4;
 
 export const PACKET_TYPE = {
   // 회원가입 및 로그인

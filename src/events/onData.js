@@ -1,4 +1,3 @@
-import { CLIENT_VERSION } from '../constants/constants.js';
 import {
   PACKET_TYPE,
   PACKET_TYPE_SIZE,
@@ -6,10 +5,10 @@ import {
   SEQUENCE_SIZE,
   PAYLOAD_LENGTH_SIZE,
 } from '../constants/header.js';
-import userRegisterHandler from '../handler/userRegister.handler.js';
+import userRegisterHandler from '../handler/user/userRegister.handler.js';
 import { GamePacket } from '../init/loadProto.js';
 
-export const onData = (socket) => (data) => {
+export const onData = (socket) => async (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
 
   const headerSize = PACKET_TYPE_SIZE + VERSION_LENGTH_SIZE + SEQUENCE_SIZE + PAYLOAD_LENGTH_SIZE;
@@ -56,13 +55,15 @@ export const onData = (socket) => (data) => {
       const decodedPacket = GamePacket.decode(payload);
       switch (packetType) {
         case PACKET_TYPE.REGISTER_REQUEST:
-          userRegisterHandler(decodedPacket.registerRequest);
+          console.log(decodedPacket.registerRequest);
+          await userRegisterHandler(socket, decodedPacket.registerRequest);
           break;
         case PACKET_TYPE.LOGIN_REQUEST:
+          // userLoginHandler(decodedPacket.loginRequest);
           break;
       }
     } catch (err) {
-      console.error(err);
+      console.error('패킷 처리 에러:', err);
     }
   }
 };

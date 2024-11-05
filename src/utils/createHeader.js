@@ -1,13 +1,9 @@
 import { config } from '../config/config.js';
+import { CLIENT_VERSION } from '../constants/constants.js';
 
 const createHeader = (payloadLength, packetType, sequence) => {
-  const {
-    PACKET_TYPE_SIZE,
-    CLIENT_VERSION,
-    VERSION_LENGTH_SIZE,
-    SEQUENCE_SIZE,
-    PAYLOAD_LENGTH_SIZE,
-  } = config.header;
+  const { PACKET_TYPE_SIZE, VERSION_LENGTH_SIZE, SEQUENCE_SIZE, PAYLOAD_LENGTH_SIZE } =
+    config.header;
 
   const packetTypeBuffer = Buffer.alloc(PACKET_TYPE_SIZE);
   packetTypeBuffer.writeUInt16BE(packetType, 0);

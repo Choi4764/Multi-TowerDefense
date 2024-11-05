@@ -6,6 +6,12 @@ export const createUser = async (id, password, email) => {
   await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [id, password, email]);
 };
 
+export const findUserById = async (id) => {
+  const [rows] = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_ID, [id]);
+
+  return rows[0];
+};
+
 // TODO: throw new Error 말고 success랑 message, failCode에 대한 Response를 반환해야 함
 export const login = async ({ id, password }) => {
   const user = await pools.USER_DB.query(SQL_QUERIES.FIND_USER_BY_ID, [id]);

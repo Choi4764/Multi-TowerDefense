@@ -1,13 +1,16 @@
+import { CLIENT_VERSION } from '../constants/constants.js';
+import {
+  PACKET_TYPE,
+  PACKET_TYPE_SIZE,
+  VERSION_LENGTH_SIZE,
+  SEQUENCE_SIZE,
+  PAYLOAD_LENGTH_SIZE,
+} from '../constants/header.js';
+import userRegisterHandler from '../handler/userRegister.handler.js';
 import { GamePacket } from '../init/loadProto.js';
 
 export const onData = (socket) => (data) => {
   socket.buffer = Buffer.concat([socket.buffer, data]);
-
-  // TODO: constants로 옮기기
-  const PACKET_TYPE_SIZE = 2;
-  const VERSION_LENGTH_SIZE = 1;
-  const SEQUENCE_SIZE = 4;
-  const PAYLOAD_LENGTH_SIZE = 4;
 
   const headerSize = PACKET_TYPE_SIZE + VERSION_LENGTH_SIZE + SEQUENCE_SIZE + PAYLOAD_LENGTH_SIZE;
 
@@ -23,6 +26,7 @@ export const onData = (socket) => (data) => {
     }
 
     const versionOffset = PACKET_TYPE_SIZE + VERSION_LENGTH_SIZE;
+    // TODO: version 검증
     const version = socket.buffer.toString('utf-8', versionOffset, versionOffset + versionLength);
 
     const sequenceOffset = versionOffset + versionLength;
@@ -47,16 +51,14 @@ export const onData = (socket) => (data) => {
     // TEST: 패킷 로그
     console.log({ packetType, version, sequence, payloadLength, payload });
 
-    // NOTE: payload 파싱 테스트
     try {
+      // 모든 패킷을 GamePacket으로 처리 가능
       const decodedPacket = GamePacket.decode(payload);
-      switch (decodedPacket.payload) {
-        case 'registerRequest':
-          console.log(decodedPacket.payload);
-          console.log(decodedPacket.registerRequest);
+      switch (packetType) {
+        case PACKET_TYPE.REGISTER_REQUEST:
+          userRegisterHandler(decodedPacket.registerRequest);
           break;
-        case 'loginRequest':
-          console.log(decodedPacket.loginRequest);
+        case PACKET_TYPE.LOGIN_REQUEST:
           break;
       }
     } catch (err) {

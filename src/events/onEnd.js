@@ -15,8 +15,7 @@ export const onEnd = (socket) => async () => {
 
       const gameSession = user.getGameSession();
 
-      if (gameSession) 
-        {
+      if (gameSession) {
         gameSession.stopGameInterval();
         await removeGameSession(gameSession.id);
       }

@@ -54,20 +54,8 @@ export const onData = (socket) => async (data) => {
       const decodedPacket = GamePacket.decode(payload);
       const handler = getHandlerByPacketType(packetType);
       if (handler) {
-        handler(socket, decodedPacket);
+        await handler(socket, decodedPacket);
       }
-      // switch (packetType) {
-      //   case PACKET_TYPE.REGISTER_REQUEST:
-      //     console.log(decodedPacket.registerRequest);
-      //     await userRegisterHandler(socket, decodedPacket.registerRequest);
-      //     break;
-      //   case PACKET_TYPE.LOGIN_REQUEST:
-      //     await userLoginhandler(socket, decodedPacket.loginRequest);
-      //     break;
-      //   case PACKET_TYPE.MATCH_REQUEST:
-      //     console.log('매치 요청 들어옴');
-      //     break;
-      // }
     } catch (err) {
       console.error('패킷 처리 에러:', err);
     }

@@ -4,43 +4,37 @@ import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { findUserById } from '../../db/user/user.db.js';
 
+const sendErrorResponse = (socket, errorMessage) => {
+  console.error(errorMessage);
+  const errorResponse = createResponse(
+    {
+      loginResponse: {
+        success: false,
+        message: errorMessage,
+        token: '',
+        failCode: 3,
+      },
+    },
+    PACKET_TYPE.LOGIN_RESPONSE,
+  );
+  socket.write(errorResponse);
+};
+
 const userLoginHandler = async (socket, payload) => {
   try {
     const { id, password } = payload.loginRequest;
     const user = await findUserById(id);
 
     if (!user) {
-      console.error(`${id} 유저가 존재하지 않습니다.`);
-      const errorResponse = createResponse(
-        {
-          loginResponse: {
-            success: false,
-            message: '유저가 존재하지 않습니다.',
-            token: '',
-            failCode: 3,
-          },
-        },
-        PACKET_TYPE.LOGIN_RESPONSE,
-      );
-      socket.write(errorResponse);
+      const errorMessage = `${id} 유저가 존재하지 않습니다.`;
+      sendErrorResponse(socket, errorMessage);
       return;
     }
 
     // 비밀번호 복호화
-    if (!await bcrypt.compare(password, user.password)) {
-      console.error(`${socket}: 비밀번호가 틀렸습니다.`);
-      const errorResponse = createResponse(
-        {
-          loginResponse: {
-            success: false,
-            message: '비밀번호가 틀렸습니다.',
-            token: '',
-            failCode: 3,
-          },
-        },
-        PACKET_TYPE.LOGIN_RESPONSE,
-      );
-      socket.write(errorResponse);
+    if (!(await bcrypt.compare(password, user.password))) {
+      const errorMessage = `${id}: 비밀번호가 틀렸습니다.`;
+      sendErrorResponse(socket, errorMessage);
       return;
     }
 

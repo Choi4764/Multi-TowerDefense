@@ -1,31 +1,56 @@
+import Joi from 'joi';
 import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 
-// TODO: email 검증, id 길이 검증, password 암호화
+const createErrorResponse = (msg) => {
+  const errorResponse = createResponse(
+    {
+      registerResponse: {
+        success: false,
+        message: msg,
+        failCode: 3,
+      },
+    },
+    PACKET_TYPE.REGISTER_RESPONSE,
+  );
+
+  return errorResponse;
+};
+
+// TODO: password 암호화
 const userRegisterHandler = async (socket, payload) => {
   try {
+    // payload 검증
+    const schema = Joi.object({
+      id: Joi.string().min(4).max(20).required(),
+      password: Joi.string().min(8).max(20).required(),
+      email: Joi.string().email().required(),
+    });
+
+    const validation = schema.validate(payload.registerRequest);
+    const validationError = validation.error;
+    if (validationError) {
+      // 검증 실패
+      const msg = `검증 실패: ${validationError}`;
+      console.error(msg);
+      const errorResponse = createErrorResponse(msg);
+      socket.write(errorResponse);
+      return;
+    }
+
     const { id, password, email } = payload.registerRequest;
     const user = await findUserById(id);
     if (user) {
       console.log(user);
       // 같은 id를 갖고 있는 사용자가 있다면
-      const errorResponse = createResponse(
-        {
-          registerResponse: {
-            success: false,
-            message: 'register fail',
-            failCode: 3,
-          },
-        },
-        PACKET_TYPE.REGISTER_RESPONSE,
-      );
+      const errorResponse = createErrorResponse('사용할 수 없는 아이디입니다.');
       socket.write(errorResponse);
       return;
     }
 
     await createUser(id, password, email);
-    console.log('createUser 성공');
+    console.log('유저 생성됨.');
 
     const responsePayload = {
       registerResponse: {

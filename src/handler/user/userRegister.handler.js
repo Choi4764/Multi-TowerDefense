@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import bcrypt from 'bcrypt';
 import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
@@ -18,7 +19,6 @@ const createErrorResponse = (msg) => {
   return errorResponse;
 };
 
-// TODO: password 암호화
 const userRegisterHandler = async (socket, payload) => {
   try {
     // payload 검증
@@ -49,7 +49,10 @@ const userRegisterHandler = async (socket, payload) => {
       return;
     }
 
-    await createUser(id, password, email);
+    // 비밀번호 암호화
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await createUser(id, hashedPassword, email);
     console.log('유저 생성됨.');
 
     const responsePayload = {

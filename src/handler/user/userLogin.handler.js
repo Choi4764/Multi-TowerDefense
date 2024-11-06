@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { findUserById } from '../../db/user/user.db.js';
 
-// TODO: DB에서 유저 확인 후 비밀번호 체크
 const userLoginHandler = async (socket, payload) => {
   try {
     const { id, password } = payload.loginRequest;
@@ -26,8 +26,8 @@ const userLoginHandler = async (socket, payload) => {
       return;
     }
 
-    if (user.password !== password) {
-      // NOTE: 비밀번호 틀림
+    // 비밀번호 복호화
+    if (!await bcrypt.compare(password, user.password)) {
       console.error(`${socket}: 비밀번호가 틀렸습니다.`);
       const errorResponse = createResponse(
         {

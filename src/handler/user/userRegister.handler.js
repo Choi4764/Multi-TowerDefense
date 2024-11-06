@@ -4,19 +4,19 @@ import { createUser, findUserById } from '../../db/user/user.db.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 
-const createErrorResponse = (msg) => {
+const sendErrorResponse = (socket, errorMessage) => {
+  console.error(errorMessage);
   const errorResponse = createResponse(
     {
       registerResponse: {
         success: false,
-        message: msg,
+        message: errorMessage,
         failCode: 3,
       },
     },
     PACKET_TYPE.REGISTER_RESPONSE,
   );
-
-  return errorResponse;
+  socket.write(errorResponse);
 };
 
 const userRegisterHandler = async (socket, payload) => {
@@ -32,20 +32,15 @@ const userRegisterHandler = async (socket, payload) => {
     const validationError = validation.error;
     if (validationError) {
       // 검증 실패
-      const msg = `검증 실패: ${validationError}`;
-      console.error(msg);
-      const errorResponse = createErrorResponse(msg);
-      socket.write(errorResponse);
+      sendErrorResponse(socket, `검증 실패: ${validationError}`);
       return;
     }
 
     const { id, password, email } = payload.registerRequest;
     const user = await findUserById(id);
     if (user) {
-      console.log(user);
       // 같은 id를 갖고 있는 사용자가 있다면
-      const errorResponse = createErrorResponse('사용할 수 없는 아이디입니다.');
-      socket.write(errorResponse);
+      sendErrorResponse(socket, '이미 있는 아이디입니다.');
       return;
     }
 

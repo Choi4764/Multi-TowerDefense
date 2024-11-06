@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package monster
+
+
+// 몬스터 사망 알림
+message C2SMonsterDeathNotification {
+    int32 monsterId = 1;
+    string timestamp = 2;
+}
+
+// 상대 몬스터 사망 알림
+message S2CEnemyMonsterDeathNotification {
+    int32 monsterId = 1;
+    string timestamp = 2;
+}

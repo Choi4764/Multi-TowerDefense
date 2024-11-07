@@ -1,3 +1,3 @@
 export const onError = (socket) => (err) => {
-    console.error(err);
-  };
+  console.error(err);
+};

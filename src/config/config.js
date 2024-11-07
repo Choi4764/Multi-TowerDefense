@@ -1,4 +1,4 @@
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from '../constants/env.js';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, HOST, PORT } from '../constants/env.js';
 import {
   PACKET_TYPE_SIZE,
   PAYLOAD_LENGTH_SIZE,
@@ -8,8 +8,8 @@ import {
 
 export const config = {
   server: {
-    host: '127.0.0.1',
-    port: 5555,
+    host: HOST,
+    port: PORT,
   },
   database: {
     USER_DB: {

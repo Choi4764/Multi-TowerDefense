@@ -5,6 +5,7 @@ import {
   PAYLOAD_LENGTH_SIZE,
 } from '../constants/header.js';
 import { GamePacket } from '../init/loadProto.js';
+
 import { getHandlerByPacketType } from '../handler/index.js';
 
 export const onData = (socket) => async (data) => {

@@ -1,0 +1,10 @@
+
+CREATE TABLE IF NOT EXISTS Record(
+   id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    userId VARCHAR(255) NOT NULL UNIQUE,  -- 플레이어 1 ID
+    opponentId VARCHAR(255) NOT NULL,  -- 플레이어 2 ID
+    isWin BOOLEAN NOT NULL,  -- 승/패 여부
+    gameDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 게임 날짜
+    FOREIGN KEY (userId) REFERENCES USER_DB.`User`(userId)
+);
+

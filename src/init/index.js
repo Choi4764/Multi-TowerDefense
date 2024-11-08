@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 import { v4 as uuidv4 } from 'uuid';
 import { loadProto } from './loadProtos.js';
@@ -19,6 +20,8 @@ const initServer = async () => {
 
 export default initServer;
 =======
+=======
+>>>>>>> 64908261868fd1a60f662e1221ef6a7b786ec493
 import { loadProto } from './loadProto.js';
 import { testConnection } from '../utils/db/testConnection.js';
 
@@ -33,4 +36,7 @@ const initServer = async () => {
 };
 
 export default initServer;
+<<<<<<< HEAD
 >>>>>>> 0e5798b (add: 헤더파서, 페이로드 역직렬화 등등)
+=======
+>>>>>>> 64908261868fd1a60f662e1221ef6a7b786ec493

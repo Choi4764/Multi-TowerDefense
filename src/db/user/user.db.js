@@ -8,8 +8,8 @@ export const findUserById = async (userId) => {
 };
 
 // 사용자 생성 함수
-export const createUser = async (userId, email, password) => {
-  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [userId, email, password]);
+export const createUser = async (email, userId, password) => {
+  await pools.USER_DB.query(SQL_QUERIES.CREATE_USER, [email, userId, password]);
   return { userId, email };
 };
 

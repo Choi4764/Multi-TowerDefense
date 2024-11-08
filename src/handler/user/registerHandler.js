@@ -48,7 +48,7 @@ export const registerHandler = async (socket, payload) => {
     // 비밀번호 암호화
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await createUser(id, email, hashedPassword);
+    await createUser(email, id, hashedPassword);
     console.log('유저 생성됨.');
 
     const responsePayload = {

@@ -3,7 +3,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../sessions/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
-import createResponse from '../../utils/response/createResponse.js';
+import { sendPacketByUser } from '../../utils/response/createResponse.js';
 
 export const spawnMonsterHandler = async (socket, payload) => {
   try {
@@ -13,7 +13,7 @@ export const spawnMonsterHandler = async (socket, payload) => {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'User not found');
     }
 
-    const monsterIndex = gameSession.getMonsterIndex();
+    const monsterIndex = user.getGameSession().getMonsterIndex();
     const mNumber = Math.floor(Math.random() * 5) + 1;
 
     const userPayload = {
@@ -23,7 +23,7 @@ export const spawnMonsterHandler = async (socket, payload) => {
       },
     };
 
-    sendPacket(user, userPayload, PACKET_TYPE.SPAWN_MONSTER_RESPONSE);
+    sendPacketByUser(user, userPayload, PACKET_TYPE.SPAWN_MONSTER_RESPONSE);
 
     const gameData = user.getGameData();
     gameData.addMonster(new Monster(monsterIndex, mNumber));
@@ -35,13 +35,13 @@ export const spawnMonsterHandler = async (socket, payload) => {
     }
 
     const opponentPayload = {
-      spawnMonsterResponse: {
+      spawnEnemyMonsterNotification: {
         monsterId: monsterIndex,
         monsterNumber: mNumber,
       },
     };
 
-    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION);
+    sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION);
   } catch (error) {
     console.error(error);
   }
@@ -61,7 +61,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
       },
     };
 
-    sendPacket(user, userPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
+    sendPacketByUser(user, userPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
 
     const opponentUser = user.getOpponentUser();
 
@@ -76,7 +76,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
       },
     };
 
-    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
+    sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
 
     if (baseHp <= 0) {
       console.log('게임 패배 및 승리 이벤트 !');
@@ -87,7 +87,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
         },
       };
   
-      sendPacket(user, userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
+      sendPacketByUser(user, userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
 
       const opponentResultPayload = {
         gameOverNotification: {
@@ -95,7 +95,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
         },
       };
   
-      sendPacket(opponentUser, opponentResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
+      sendPacketByUser(opponentUser, opponentResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
     }
   } catch (error) {
     console.error(error);
@@ -106,8 +106,7 @@ export const enemyDeathNotificationHandler = async (socket, payload) => {
   const { monsterId } = payload.monsterDeathNotification;
 
   const user = getUserBySocket(socket);
-  const game = user.getGameSession();
-  const opponentUser = game.getOpponentUser(user.id);
+  const opponentUser = user.getOpponentUser();
 
   const gameData = user.getGameData();
   gameData.addUserGold(10);
@@ -120,5 +119,5 @@ export const enemyDeathNotificationHandler = async (socket, payload) => {
     },
   };
 
-  sendPacket(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION);
+  sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION);
 };

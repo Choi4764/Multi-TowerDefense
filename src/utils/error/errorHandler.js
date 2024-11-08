@@ -1,6 +1,4 @@
 import { getUserBySocket } from "../../sessions/user.session.js";
-import createResponse from "../response/createResponse.js";
-
 
 export const handleError = (socket, error) => {
   let responseCode;

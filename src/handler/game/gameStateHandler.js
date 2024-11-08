@@ -1,12 +1,11 @@
-import { getUserBySocket, removeUser } from '../../sessions/user.session.js';
+import { getUserBySocket } from '../../sessions/user.session.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import userManager from '../../classes/managers/userManager.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import CustomError from '../../utils/error/customError.js';
 import { removeGameSession } from '../../sessions/game.session.js';
-import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
-import sendPacket from '../../utils/response/createResponse.js';
+import { sendPacketByUser } from '../../utils/response/createResponse.js';
 
 export const matchHandler = async (socket, payload) => {
   try {
@@ -32,7 +31,7 @@ export const stateSyncNotification = async (user) => {
       stateSyncNotification: { userGold, baseHp, monsterLevel, score, towers, monsters},
     };
 
-    sendPacket(user, payload, PACKET_TYPE.STATE_SYNC_NOTIFICATION);
+    sendPacketByUser(user, payload, PACKET_TYPE.STATE_SYNC_NOTIFICATION);
 
   } catch (err) {
     console.error(err);

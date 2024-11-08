@@ -18,44 +18,31 @@ export const towerPurchaseHandler = async (socket, payload) => {
     const towerIndex = gameSession.getTowerIndex();
     const { x, y } = payload.towerPurchaseRequest;
 
-    const purchaseResponse = createResponse(
-      {
-        towerPurchaseResponse: {
-          towerId: towerIndex,
-        },
+    const userPayload = {
+      towerPurchaseResponse: {
+        towerId: towerIndex,
       },
-      PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
-    );
+    };
 
-    socket.write(purchaseResponse);
+    sendPacket(user, userPayload, PACKET_TYPE.TOWER_PURCHASE_RESPONSE);
 
     const gameData = user.getGameData();
     gameData.addUserGold(initialState.towerCost);
     gameData.addTower(new Tower(towerIndex, x, y));
 
-    if (!gameSession) {
-      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임이 존재하지 않습니다');
-    }
-
-    const opponentUser = gameSession.getOpponentUser(user.id);
+    const opponentUser = user.getOpponentUser();
 
     if (!opponentUser) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저가 존재하지 않습니다');
+       return;
     }
 
-    const enemyTowerNotification = createResponse(
-      {
-        addEnemyTowerNotification: {
-          towerId: towerIndex,
-          x,
-          y
-        },
+    const opponentPayload = {
+      towerPurchaseResponse: {
+        towerId: towerIndex,
       },
-      PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
-    );
+    };
 
-    opponentUser.socket.write(enemyTowerNotification);
-
+    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION);
   } catch (error) {
     console.error(error);
   }
@@ -63,33 +50,26 @@ export const towerPurchaseHandler = async (socket, payload) => {
 
 export const towerAttackHandler = (socket, payload) => {
   try {
-
     const { towerId, monsterId } = payload.towerAttackRequest;
     const user = getUserBySocket(socket);
 
-    if(!user){
-        throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'User not found');        
+    if (!user) {
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'User not found');
     }
 
-    const game = user.getGameSession();
-    if(!game){
-        throw new CustomError(ErrorCodes.GAME_NOT_FOUND, 'Game not found');
+    const opponentUser = user.getOpponentUser();
+    if (!opponentUser) {
+      return;
     }
 
-    const opponentUser = game.getOpponentUser(user.id);
-    if(!opponentUser){
-        throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'opponentUser not found');
-    }  
+    const opponentPayload = {
+      enemyTowerAttackNotification: {
+        towerId,
+        monsterId,
+      },
+    };
 
-    const attackNotification = createResponse({
-        enemyTowerAttackNotification:{
-            towerId,
-            monsterId
-        }
-    }, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION)
-
-    opponentUser.socket.write(attackNotification);
-    
+    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
   } catch (error) {
     console.error(error);
   }

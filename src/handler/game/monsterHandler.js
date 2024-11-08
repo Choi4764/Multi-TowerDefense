@@ -13,46 +13,35 @@ export const spawnMonsterHandler = async (socket, payload) => {
       throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'User not found');
     }
 
-    const gameSession = user.getGameSession();
     const monsterIndex = gameSession.getMonsterIndex();
     const mNumber = Math.floor(Math.random() * 5) + 1;
 
-    const monsterSpawn = createResponse(
-      {
-        spawnMonsterResponse: {
-          monsterId: monsterIndex,
-          monsterNumber: mNumber,
-        },
+    const userPayload = {
+      spawnMonsterResponse: {
+        monsterId: monsterIndex,
+        monsterNumber: mNumber,
       },
-      PACKET_TYPE.SPAWN_MONSTER_RESPONSE,
-    );
+    };
 
-    socket.write(monsterSpawn);
+    sendPacket(user, userPayload, PACKET_TYPE.SPAWN_MONSTER_RESPONSE);
 
     const gameData = user.getGameData();
     gameData.addMonster(new Monster(monsterIndex, mNumber));
 
-    if (!gameSession) {
-      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임이 존재하지 않습니다');
-    }
-
-    const opponentUser = gameSession.getOpponentUser(user.id);
+    const opponentUser = user.getOpponentUser();
 
     if (!opponentUser) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저가 존재하지 않습니다');
+      return;
     }
 
-    const spawnNotification = createResponse(
-      {
-        spawnEnemyMonsterNotification: {
-          monsterId: monsterIndex,
-          monsterNumber: mNumber,
-        },
+    const opponentPayload = {
+      spawnMonsterResponse: {
+        monsterId: monsterIndex,
+        monsterNumber: mNumber,
       },
-      PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION,
-    );
+    };
 
-    opponentUser.socket.write(spawnNotification);
+    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION);
   } catch (error) {
     console.error(error);
   }
@@ -62,63 +51,51 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
   try {
     const { damage } = payload.monsterAttackBaseRequest;
 
-    // console.log(`몬스터 데미지 : ${damage}`);
-    
     const user = getUserBySocket(socket);
     let baseHp = user.getGameData().getDamageBaseHp(damage);
 
-    const baseHpResponse = createResponse(
-      {
-        updateBaseHpNotification: {
-          isOpponent: false,
-          baseHp,
-        },
+    const userPayload = {
+      updateBaseHpNotification: {
+        isOpponent: false,
+        baseHp,
       },
-      PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION,
-    );
+    };
 
-    socket.write(baseHpResponse);
+    sendPacket(user, userPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
 
-    const game = user.getGameSession();
-    const opponentUser = game.getOpponentUser(user.id);
+    const opponentUser = user.getOpponentUser();
 
-    const enemyBaseHpResponse = createResponse(
-      {
-        updateBaseHpNotification: {
-          isOpponent: true,
-          baseHp,
-        },
+    if (!opponentUser) {
+      return;
+    }
+
+    const opponentPayload = {
+      updateBaseHpNotification: {
+        isOpponent: true,
+        baseHp,
       },
-      PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION,
-    );
+    };
 
-    opponentUser.socket.write(enemyBaseHpResponse);
+    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
 
     if (baseHp <= 0) {
+      console.log('게임 패배 및 승리 이벤트 !');
 
-      console.log("게임 패배 및 승리 이벤트 !");
-      
-      const gameOverNotfication = createResponse(
-        {
-          gameOverNotification: {
-            isWin: false,
-          },
+      const userResultPayload = {
+        gameOverNotification: {
+          isWin: false,
         },
-        PACKET_TYPE.GAME_OVER_NOTIFICATION,
-      );
-      
-      socket.write(gameOverNotfication);
+      };
+  
+      sendPacket(user, userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
 
-      const enemyGameOverNotfication = createResponse(
-        {
-          gameOverNotification: {
-            isWin: true,
-          },
+      const opponentResultPayload = {
+        gameOverNotification: {
+          isWin: true,
         },
-        PACKET_TYPE.GAME_OVER_NOTIFICATION,
-      );
-
-      opponentUser.socket.write(enemyGameOverNotfication);
+      };
+  
+      sendPacket(opponentUser, opponentResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
     }
   } catch (error) {
     console.error(error);
@@ -132,21 +109,16 @@ export const enemyDeathNotificationHandler = async (socket, payload) => {
   const game = user.getGameSession();
   const opponentUser = game.getOpponentUser(user.id);
 
-  // console.log(`몬스터 사망 : ${monsterId}`);
-
   const gameData = user.getGameData();
   gameData.addUserGold(10);
   gameData.addScore(10);
   gameData.removeMonster(monsterId);
 
-  const deathNotification = createResponse(
-    {
-      enemyMonsterDeathNotification: {
-        monsterId,
-      },
+  const opponentPayload =  {
+    enemyMonsterDeathNotification: {
+      monsterId,
     },
-    PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION,
-  );
+  };
 
-  opponentUser.socket.write(deathNotification);
+  sendPacket(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION);
 };

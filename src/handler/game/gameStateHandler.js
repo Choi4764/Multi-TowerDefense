@@ -6,6 +6,7 @@ import CustomError from '../../utils/error/customError.js';
 import { removeGameSession } from '../../sessions/game.session.js';
 import createResponse from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import sendPacket from '../../utils/response/createResponse.js';
 
 export const matchHandler = async (socket, payload) => {
   try {
@@ -22,24 +23,18 @@ export const matchHandler = async (socket, payload) => {
 };
 
 export const stateSyncNotification = async (user) => {
-  try{
+  try {
     const { userGold, baseHp, monsterLevel, score, towers, monsters } = user.getGameData();
 
     console.log(user.getGameData());
 
-    const stateNotification = createResponse({
-      stateSyncNotification:{
-        userGold,
-        baseHp,
-        monsterLevel,
-        score,
-        towers,
-        monsters
-      }
-    }, PACKET_TYPE.STATE_SYNC_NOTIFICATION)
+    const payload = {
+      stateSyncNotification: { userGold, baseHp, monsterLevel, score, towers, monsters},
+    };
 
-    user.socket.write(stateNotification);
-  }catch (err) {
+    sendPacket(user, payload, PACKET_TYPE.STATE_SYNC_NOTIFICATION);
+
+  } catch (err) {
     console.error(err);
   }
 };
@@ -55,7 +50,6 @@ export const gameEndHandler = async (socket, payload) => {
       await removeGameSession(user.gameSession.id);
       user.setGameSession(null, null);
     }
-    
   } catch (err) {
     handleError(socket, err);
   }

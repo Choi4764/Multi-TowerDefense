@@ -30,9 +30,8 @@ const createHeader = (payloadLength, packetType, sequence) => {
     ]);
   };
 
-const sendPacketByUser = (user, payload, packetType) => {
+export const createResponse = (payload, packetType, sequence) => {
   const payloadBuffer = GamePacket.encode(GamePacket.create(payload)).finish();
-  const sequence = user ? getNextSequence(user.id) : 0;
 
   const header = createHeader(
     payloadBuffer.length,
@@ -40,21 +39,5 @@ const sendPacketByUser = (user, payload, packetType) => {
     sequence
   );
 
-  const response = Buffer.concat([header, payloadBuffer]);
-  user.socket.write(response);
+  return Buffer.concat([header, payloadBuffer]);
 };
-
-const sendPacketBySocket = (socket, payload, packetType) => {
-  const payloadBuffer = GamePacket.encode(GamePacket.create(payload)).finish();
-
-  const header = createHeader(
-    payloadBuffer.length,
-    packetType,
-    0
-  );
-
-  const response = Buffer.concat([header, payloadBuffer]);
-  socket.write(response);
-};
-
-export { sendPacketByUser, sendPacketBySocket };

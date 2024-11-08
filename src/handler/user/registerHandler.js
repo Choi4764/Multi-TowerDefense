@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import bcrypt from 'bcrypt';
 import { createUser, findUserById } from '../../db/user/user.db.js';
-import { sendPacketBySocket } from '../../utils/response/createResponse.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { GlobalFailCode } from '../../init/loadProtos.js';
 
@@ -28,7 +28,13 @@ export const registerHandler = async (socket, payload) => {
         },
       };
 
-      sendPacketBySocket(socket, errorResponse, PACKET_TYPE.REGISTER_RESPONSE);
+      socket.write(
+        createResponse(
+          errorResponse,
+          PACKET_TYPE.REGISTER_RESPONSE,
+          0,
+        ),
+      );
       return;
     }
 
@@ -45,7 +51,13 @@ export const registerHandler = async (socket, payload) => {
         },
       };
 
-      sendPacketBySocket(socket, errorResponse, PACKET_TYPE.REGISTER_RESPONSE);
+      socket.write(
+        createResponse(
+          errorResponse,
+          PACKET_TYPE.REGISTER_RESPONSE,
+          0,
+        ),
+      );
       return;
     }
 
@@ -63,7 +75,13 @@ export const registerHandler = async (socket, payload) => {
       },
     };
 
-    sendPacketBySocket(socket, responsePayload, PACKET_TYPE.REGISTER_RESPONSE);
+    socket.write(
+      createResponse(
+        responsePayload,
+        PACKET_TYPE.REGISTER_RESPONSE,
+        0,
+      ),
+    );
   } catch (err) {
     throw new Error(err);
   }

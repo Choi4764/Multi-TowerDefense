@@ -3,7 +3,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { addGameSession } from '../../sessions/game.session.js';
 import { v4 as uuidv4 } from 'uuid';
 import { GameData } from '../../classes/models/gameData.class.js';
-import { sendPacketByUser } from '../../utils/response/createResponse.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 
 export const matchNotification = (users) => {
   try {
@@ -12,24 +12,19 @@ export const matchNotification = (users) => {
     const game = addGameSession(uuidv4());
 
     users.forEach((user, index) => {
-      // 매칭 시작 알림 생성
-      const isOpponent = index % 2 === 0;  
-
+      const isOpponent = index % 2 === 0;
       const payload = {
         matchStartNotification: {
           initialGameState: initialState,
           playerData: isOpponent ? playerData : opponentData,
-          opponentData: isOpponent ? opponentData : playerData
-        }
+          opponentData: isOpponent ? opponentData : playerData,
+        },
       };
-  
-      sendPacketByUser(user, payload, PACKET_TYPE.MATCH_START_NOTIFICATION);
 
-      // 게임 데이터 생성 및 세션 설정
+      user.socket.write(createResponse(payload, PACKET_TYPE.MATCH_START_NOTIFICATION, user.getNextSequence()));
+
       const gameData = new GameData(initialState.initialGold, initialState.baseHp, 1, 0);
       user.setGameSession(game, gameData);
-
-      // 유저를 게임 세션에 추가
       game.addUser(user);
     });
 

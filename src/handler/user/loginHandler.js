@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { sendPacketBySocket } from '../../utils/response/createResponse.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { findUserById } from '../../db/user/user.db.js';
 import { GlobalFailCode } from '../../init/loadProtos.js';
@@ -24,7 +24,13 @@ export const loginHandler = async (socket, payload) => {
         },
       };
 
-      sendPacketBySocket(socket, errorResponse, PACKET_TYPE.LOGIN_RESPONSE);
+      socket.write(
+        createResponse(
+          errorResponse,
+          PACKET_TYPE.LOGIN_RESPONSE,
+          0,
+        ),
+      );
       return;
     }
 
@@ -41,14 +47,20 @@ export const loginHandler = async (socket, payload) => {
         },
       };
 
-      sendPacketBySocket(socket, errorResponse, PACKET_TYPE.LOGIN_RESPONSE);
+      socket.write(
+        createResponse(
+          errorResponse,
+          PACKET_TYPE.LOGIN_RESPONSE,
+          0,
+        ),
+      );
       return;
     }
 
     const token = jwt.sign(user, config.auth.key, { expiresIn: '1h' });
     const bearerToken = `Bearer ${token}`;
 
-    addUser(token, socket);
+    const newUser = addUser(token, socket);
 
     const responsePayload = {
       loginResponse: {
@@ -59,7 +71,13 @@ export const loginHandler = async (socket, payload) => {
       },
     };
 
-    sendPacketBySocket(socket, responsePayload, PACKET_TYPE.LOGIN_RESPONSE);
+    newUser.socket.write(
+      createResponse(
+        responsePayload,
+        PACKET_TYPE.LOGIN_RESPONSE,
+        newUser.getNextSequence(),
+      ),
+    );
   } catch (err) {
     throw new Error(err);
   }

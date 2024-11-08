@@ -3,45 +3,22 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../sessions/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
-import { sendPacketByUser } from '../../utils/response/createResponse.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 
 export const spawnMonsterHandler = async (socket, payload) => {
   try {
     const user = getUserBySocket(socket);
-
-    if (!user) {
-      throw new CustomError(ErrorCodes.USER_NOT_FOUND, 'User not found');
-    }
-
+    const enemy = user.getEnemyUser();
     const monsterIndex = user.getGameSession().getMonsterIndex();
     const mNumber = Math.floor(Math.random() * 5) + 1;
 
-    const userPayload = {
-      spawnMonsterResponse: {
-        monsterId: monsterIndex,
-        monsterNumber: mNumber,
-      },
-    };
+    user.getGameData().addMonster(new Monster(monsterIndex, mNumber));
 
-    sendPacketByUser(user, userPayload, PACKET_TYPE.SPAWN_MONSTER_RESPONSE);
+    const userPayload = { spawnMonsterResponse: { monsterId: monsterIndex, monsterNumber: mNumber } };
+    const enemyPayload = { spawnEnemyMonsterNotification: { monsterId: monsterIndex, monsterNumber: mNumber } };
 
-    const gameData = user.getGameData();
-    gameData.addMonster(new Monster(monsterIndex, mNumber));
-
-    const opponentUser = user.getOpponentUser();
-
-    if (!opponentUser) {
-      return;
-    }
-
-    const opponentPayload = {
-      spawnEnemyMonsterNotification: {
-        monsterId: monsterIndex,
-        monsterNumber: mNumber,
-      },
-    };
-
-    sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION);
+    user.socket.write(createResponse(userPayload, PACKET_TYPE.SPAWN_MONSTER_RESPONSE, user.getNextSequence()));
+    enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION, enemy.getNextSequence()));
   } catch (error) {
     console.error(error);
   }
@@ -52,50 +29,21 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     const { damage } = payload.monsterAttackBaseRequest;
 
     const user = getUserBySocket(socket);
-    let baseHp = user.getGameData().getDamageBaseHp(damage);
+    const enemy = user.getEnemyUser();
+    const baseHp = user.getGameData().getDamageBaseHp(damage);
 
-    const userPayload = {
-      updateBaseHpNotification: {
-        isOpponent: false,
-        baseHp,
-      },
-    };
+    const userPayload = { updateBaseHpNotification: { isOpponent: false, baseHp } };
+    const enemyPayload = { updateBaseHpNotification: { isOpponent: true, baseHp } };
 
-    sendPacketByUser(user, userPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
-
-    const opponentUser = user.getOpponentUser();
-
-    if (!opponentUser) {
-      return;
-    }
-
-    const opponentPayload = {
-      updateBaseHpNotification: {
-        isOpponent: true,
-        baseHp,
-      },
-    };
-
-    sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION);
+    user.socket.write(createResponse(userPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, user.getNextSequence()));
+    enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, enemy.getNextSequence()));
 
     if (baseHp <= 0) {
-      console.log('게임 패배 및 승리 이벤트 !');
-
-      const userResultPayload = {
-        gameOverNotification: {
-          isWin: false,
-        },
-      };
-  
-      sendPacketByUser(user, userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
-
-      const opponentResultPayload = {
-        gameOverNotification: {
-          isWin: true,
-        },
-      };
-  
-      sendPacketByUser(opponentUser, opponentResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION);
+      const userResultPayload  = { gameOverNotification: { isWin: false } };
+      const enemyResultPayload  = { gameOverNotification: { isWin: true } };
+      
+      user.socket.write(createResponse(userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, user.getNextSequence()));
+      enemy?.socket.write(createResponse(enemyResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, enemy.getNextSequence()));
     }
   } catch (error) {
     console.error(error);
@@ -106,18 +54,13 @@ export const enemyDeathNotificationHandler = async (socket, payload) => {
   const { monsterId } = payload.monsterDeathNotification;
 
   const user = getUserBySocket(socket);
-  const opponentUser = user.getOpponentUser();
-
+  const enemy = user.getEnemyUser();
   const gameData = user.getGameData();
+
   gameData.addUserGold(10);
   gameData.addScore(10);
   gameData.removeMonster(monsterId);
 
-  const opponentPayload =  {
-    enemyMonsterDeathNotification: {
-      monsterId,
-    },
-  };
-
-  sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION);
+  const enemyPayload = { enemyMonsterDeathNotification: { monsterId } };
+  enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION, enemy.getNextSequence()));
 };

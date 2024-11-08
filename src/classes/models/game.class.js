@@ -6,14 +6,14 @@ class Game {
     this.id = id;
     this.users = [];
     this.monsterIndex = 0;
-    this.towerIndex = 0;    
+    this.towerIndex = 7;    
   }
 
   addUser(user) {
     this.users.push(user);
   }
 
-  getOpponentUser(userId) {
+  getEnemyUser(userId) {
     return this.users.find((user) => user.id !== userId);
   }
 

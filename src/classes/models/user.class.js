@@ -26,12 +26,12 @@ class User {
     return this.gameSession;
   }
 
-  getOpponentUser()
+  getEnemyUser()
   {
     if (!this.gameSession) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임이 존재하지 않습니다');
     }
-    return this.gameSession.getOpponentUser(this.id);
+    return this.gameSession.getEnemyUser(this.id);
   }
 
   addTower(tower) {

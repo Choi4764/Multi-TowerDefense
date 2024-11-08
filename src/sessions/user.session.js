@@ -20,7 +20,13 @@ export const getUserById = (id) => {
 };
 
 export const getUserBySocket = (socket) => {
-  return userSessions.find((user) => user.socket === socket);
+  const user = userSessions.find((user) => user.socket === socket);
+
+  if (!user) {
+    throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다');
+  }
+
+  return user;
 };
 
 export const getNextSequence = (id) => {

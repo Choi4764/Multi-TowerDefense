@@ -1,6 +1,7 @@
 import { config } from "../../config/config.js";
 import { CLIENT_VERSION } from "../../constants/env.js";
 import { GamePacket } from "../../init/loadProtos.js";
+import { getNextSequence } from "../../sessions/user.session.js";
 
 const createHeader = (payloadLength, packetType, sequence) => {
     const { PACKET_TYPE_SIZE, VERSION_LENGTH_SIZE, SEQUENCE_SIZE, PAYLOAD_LENGTH_SIZE } =
@@ -29,11 +30,10 @@ const createHeader = (payloadLength, packetType, sequence) => {
     ]);
   };
 
-
-const sendPacket = (user, payload, packetType) => {
+const sendPacketByUser = (user, payload, packetType) => {
   const payloadBuffer = GamePacket.encode(GamePacket.create(payload)).finish();
   const sequence = user ? getNextSequence(user.id) : 0;
-  
+
   const header = createHeader(
     payloadBuffer.length,
     packetType,
@@ -44,4 +44,17 @@ const sendPacket = (user, payload, packetType) => {
   user.socket.write(response);
 };
 
-export default sendPacket;
+const sendPacketBySocket = (socket, payload, packetType) => {
+  const payloadBuffer = GamePacket.encode(GamePacket.create(payload)).finish();
+
+  const header = createHeader(
+    payloadBuffer.length,
+    packetType,
+    0
+  );
+
+  const response = Buffer.concat([header, payloadBuffer]);
+  socket.write(response);
+};
+
+export { sendPacketByUser, sendPacketBySocket };

@@ -28,10 +28,10 @@ class User {
 
   getOpponentUser()
   {
-    if (!gameSession) {
+    if (!this.gameSession) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임이 존재하지 않습니다');
     }
-    return gameSession.getOpponentUser(id);
+    return this.gameSession.getOpponentUser(this.id);
   }
 
   addTower(tower) {

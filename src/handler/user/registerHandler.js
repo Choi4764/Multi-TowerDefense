@@ -1,23 +1,21 @@
 import Joi from 'joi';
 import bcrypt from 'bcrypt';
 import { createUser, findUserById } from '../../db/user/user.db.js';
-import createResponse from '../../utils/response/createResponse.js';
+import { sendPacketBySocket } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { GlobalFailCode } from '../../init/loadProtos.js';
 
 const sendErrorResponse = (socket, errorMessage) => {
   console.error(errorMessage);
-  const errorResponse = createResponse(
-    {
+  const errorResponse = {
       registerResponse: {
         success: false,
         message: errorMessage,
         failCode: GlobalFailCode.AUTHENTICATION_FAILED,
       },
-    },
-    PACKET_TYPE.REGISTER_RESPONSE,
-  );
-  socket.write(errorResponse);
+    };
+
+    sendPacketBySocket(socekt, errorResponse, PACKET_TYPE.REGISTER_RESPONSE)
 };
 
 export const registerHandler = async (socket, payload) => {
@@ -59,8 +57,7 @@ export const registerHandler = async (socket, payload) => {
       },
     };
 
-    const response = createResponse(responsePayload, PACKET_TYPE.REGISTER_RESPONSE);
-    socket.write(response);
+    sendPacketBySocket(socket, responsePayload,PACKET_TYPE.REGISTER_RESPONSE )
   } catch (err) {
     throw new Error(err);
   }

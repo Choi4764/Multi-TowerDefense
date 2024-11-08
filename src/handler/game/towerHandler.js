@@ -3,8 +3,7 @@ import { initialState } from '../../classes/models/matchDummyData.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../sessions/user.session.js';
 import CustomError from '../../utils/error/customError.js';
-import createResponse from '../../utils/response/createResponse.js';
-import { stateSyncNotification } from './gameStateHandler.js';
+import { sendPacketByUser } from '../../utils/response/createResponse.js';
 
 export const towerPurchaseHandler = async (socket, payload) => {
   try {
@@ -24,7 +23,7 @@ export const towerPurchaseHandler = async (socket, payload) => {
       },
     };
 
-    sendPacket(user, userPayload, PACKET_TYPE.TOWER_PURCHASE_RESPONSE);
+    sendPacketByUser(user, userPayload, PACKET_TYPE.TOWER_PURCHASE_RESPONSE);
 
     const gameData = user.getGameData();
     gameData.addUserGold(initialState.towerCost);
@@ -42,7 +41,7 @@ export const towerPurchaseHandler = async (socket, payload) => {
       },
     };
 
-    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION);
+    sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION);
   } catch (error) {
     console.error(error);
   }
@@ -69,7 +68,7 @@ export const towerAttackHandler = (socket, payload) => {
       },
     };
 
-    sendPacket(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
+    sendPacketByUser(opponentUser, opponentPayload, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
   } catch (error) {
     console.error(error);
   }

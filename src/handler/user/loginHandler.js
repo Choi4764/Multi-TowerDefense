@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import createResponse from '../../utils/response/createResponse.js';
+import { sendPacketBySocket } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { findUserById } from '../../db/user/user.db.js';
 import { GlobalFailCode } from '../../init/loadProtos.js';
@@ -9,18 +9,17 @@ import { addUser } from '../../sessions/user.session.js';
 
 const sendErrorResponse = (socket, errorMessage) => {
   console.error(errorMessage);
-  const errorResponse = createResponse(
-    {
+
+  const errorResponse = {
       loginResponse: {
         success: false,
         message: errorMessage,
         token: '',
         failCode: GlobalFailCode.AUTHENTICATION_FAILED,
       },
-    },
-    PACKET_TYPE.LOGIN_RESPONSE,
-  );
-  socket.write(errorResponse);
+    }; 
+
+  sendPacketBySocket(socket, errorResponse, PACKET_TYPE.LOGIN_RESPONSE)
 };
 
 export const loginHandler = async (socket, payload) => {
@@ -59,8 +58,7 @@ export const loginHandler = async (socket, payload) => {
       },
     };
 
-    const response = createResponse(responsePayload, PACKET_TYPE.LOGIN_RESPONSE);
-    socket.write(response);
+    sendPacketBySocket(socket, responsePayload, PACKET_TYPE.LOGIN_RESPONSE);
   } catch (err) {
     throw new Error(err);
   }

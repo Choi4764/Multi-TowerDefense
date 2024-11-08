@@ -1,3 +1,6 @@
+import CustomError from "../../utils/error/customError.js";
+import { ErrorCodes } from "../../utils/error/errorCodes.js";
+
 class User {
   constructor(id, socket) {
     this.id = id;
@@ -21,6 +24,14 @@ class User {
 
   getGameSession(){
     return this.gameSession;
+  }
+
+  getOpponentUser()
+  {
+    if (!gameSession) {
+      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임이 존재하지 않습니다');
+    }
+    return gameSession.getOpponentUser(id);
   }
 
   addTower(tower) {

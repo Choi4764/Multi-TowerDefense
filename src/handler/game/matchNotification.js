@@ -13,21 +13,17 @@ export const matchNotification = (users) => {
 
     users.forEach((user, index) => {
       // 매칭 시작 알림 생성
-      const isOpponent = index % 2 === 0;      
-      
-      const matchResult = createResponse(
-        {
-          matchStartNotification: {
-            initialGameState: initialState,
-            playerData: isOpponent ? playerData : opponentData,
-            opponentData: isOpponent ? opponentData : playerData
-          },
-        },
-        PACKET_TYPE.MATCH_START_NOTIFICATION,
-      );
+      const isOpponent = index % 2 === 0;  
 
-      // 소켓으로 매칭 시작 알림 전송
-      user.socket.write(matchResult);
+      const payload = {
+        matchStartNotification: {
+          initialGameState: initialState,
+          playerData: isOpponent ? playerData : opponentData,
+          opponentData: isOpponent ? opponentData : playerData
+        }
+      };
+  
+      sendPacket(user, payload,  PACKET_TYPE.MATCH_START_NOTIFICATION);
 
       // 게임 데이터 생성 및 세션 설정
       const gameData = new GameData(initialState.initialGold, initialState.baseHp, 1, 0);

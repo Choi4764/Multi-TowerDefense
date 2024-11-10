@@ -1,5 +1,5 @@
-import Game from "../classes/models/game.class.js";
-import { gameSessions } from "./sessions.js";
+import Game from '../classes/models/game.class.js';
+import { gameSessions } from './sessions.js';
 
 export const addGameSession = (gameId) => {
   const game = new Game(gameId);
@@ -11,7 +11,7 @@ export const addGameSession = (gameId) => {
 export const removeGameSession = (gameId) => {
   const index = gameSessions.findIndex((game) => game.id === gameId);
 
-  if(index !== -1){
+  if (index !== -1) {
     gameSessions.splice(index, 1);
   }
 

@@ -59,7 +59,5 @@ export const onData = (socket) => async (data) => {
 };
 
 export const getPacketTypeName = (packetType) => {
-  return (
-    Object.keys(PACKET_TYPE).find((key) => PACKET_TYPE[key] === packetType) || 'Unknown packet type'
-  );
+  return Object.keys(PACKET_TYPE).find((key) => PACKET_TYPE[key] === packetType) || 'Unknown packet type';
 };

@@ -4,10 +4,15 @@ import { addGameSession } from '../../sessions/game.session.js';
 import { v4 as uuidv4 } from 'uuid';
 import { GameData } from '../../classes/models/gameData.class.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { jwtDecode } from 'jwt-decode';
 
 export const matchNotification = (users) => {
   try {
     console.log(`매칭된 유저들: ${users.map((user) => user.name).join(', ')}`);
+
+    const IDPayload = {
+      userIDNotification: { player01Id: jwtDecode(users[0].id).userId, player02Id: jwtDecode(users[1].id).userId },
+    };
 
     const game = addGameSession(uuidv4());
 
@@ -22,6 +27,7 @@ export const matchNotification = (users) => {
       };
 
       user.socket.write(createResponse(payload, PACKET_TYPE.MATCH_START_NOTIFICATION, user.getNextSequence()));
+      user.socket.write(createResponse(IDPayload, PACKET_TYPE.USER_ID_NOTIFICATION, user.getNextSequence()));
 
       const gameData = new GameData(initialState.initialGold, initialState.baseHp, 1, 0);
       user.setGameSession(game, gameData);

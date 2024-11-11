@@ -43,8 +43,16 @@ class User {
     return ++this.sequence;
   }
 
-  getGameData(){
+  getGameData(){    
     return this.gameData;
+  }
+
+  getRandomMonsterLevelUp(){
+    const probability = Math.random();
+
+    if (probability <= 0.3) {
+        this.gameData.addMonsterLevel(1);
+    }
   }
 }
 

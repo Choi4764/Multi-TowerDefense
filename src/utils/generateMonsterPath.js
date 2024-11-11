@@ -1,4 +1,4 @@
-// generateRandomZigZagPath(22, 0, 250, 1370, 80)
+// generatePath(22, 0, 250, 1370, 80)
 const generatePath = (pathCounts, startX, startY, endX, maxOffsetY) => {
   const path = [];
   // 균일한 간격으로 배치하기 위한 x 증가치

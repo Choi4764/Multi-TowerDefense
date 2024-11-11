@@ -20,7 +20,7 @@ export const towerPurchaseHandler = async (socket, payload) => {
     const enemyPayload = { addEnemyTowerNotification: { towerId: towerIndex, x, y } };
 
     user.socket.write(createResponse(userPayload, PACKET_TYPE.TOWER_PURCHASE_RESPONSE, user.getNextSequence()));
-    enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION, enemy.getNextSequence()));
+    enemy.socket.write(createResponse(enemyPayload, PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION, enemy.getNextSequence()));
   } catch (error) {
     console.error(error);
   }
@@ -34,7 +34,7 @@ export const towerAttackHandler = (socket, payload) => {
 
     const enemyPayload = { enemyTowerAttackNotification: { towerId, monsterId } };
 
-    enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION, enemy.getNextSequence()));
+    enemy.socket.write(createResponse(enemyPayload, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION, enemy.getNextSequence()));
   } catch (error) {
     console.error(error);
   }

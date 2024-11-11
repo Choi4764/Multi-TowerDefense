@@ -17,7 +17,7 @@ export const spawnMonsterHandler = async (socket, payload) => {
     const enemyPayload = { spawnEnemyMonsterNotification: { monsterId: monsterIndex, monsterNumber: mNumber } };
 
     user.socket.write(createResponse(userPayload, PACKET_TYPE.SPAWN_MONSTER_RESPONSE, user.getNextSequence()));
-    enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION, enemy.getNextSequence()));
+    enemy.socket.write(createResponse(enemyPayload, PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION, enemy.getNextSequence()));
   } catch (error) {
     console.error(error);
   }
@@ -35,7 +35,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     const enemyPayload = { updateBaseHpNotification: { isOpponent: true, baseHp } };
 
     user.socket.write(createResponse(userPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, user.getNextSequence()));
-    enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, enemy.getNextSequence()));
+    enemy.socket.write(createResponse(enemyPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, enemy.getNextSequence()));
 
     if (baseHp <= 0) {
       const userResultPayload = { gameOverNotification: { isWin: false } };
@@ -66,7 +66,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
       }
 
       user.socket.write(createResponse(userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, user.getNextSequence()));
-      enemy?.socket.write(createResponse(enemyResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, enemy.getNextSequence()));
+      enemy.socket.write(createResponse(enemyResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, enemy.getNextSequence()));
     }
   } catch (error) {
     console.error(error);

@@ -18,6 +18,7 @@ export const matchHandler = async (socket, payload) => {
 
 export const stateSyncNotification = async (user) => {
   try {
+    user.getRandomMonsterLevelUp();    
     const { userGold, baseHp, monsterLevel, score, towers, monsters } = user.getGameData();
     const payload = { stateSyncNotification: { userGold, baseHp, monsterLevel, score, towers, monsters } };
 

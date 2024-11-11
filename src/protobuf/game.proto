@@ -162,6 +162,11 @@ message S2CEnemyMonsterDeathNotification {
     int32 monsterId = 1;
 }
 
+message S2CUserIDNotification {
+    string player01Id = 1;
+    string player02Id = 2;
+}
+
 // 최상위 GamePacket 메시지
 message GamePacket {
     oneof payload {
@@ -203,6 +208,8 @@ message GamePacket {
         // 몬스터 사망 통지
         C2SMonsterDeathNotification monsterDeathNotification = 20;
         S2CEnemyMonsterDeathNotification enemyMonsterDeathNotification = 21;
+
+        S2CUserIDNotification userIDNotification = 22;
     }
 }
 

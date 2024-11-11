@@ -59,13 +59,12 @@ export const loginHandler = async (socket, payload) => {
 
     const token = jwt.sign(user, config.auth.key, { expiresIn: '1h' });
     const bearerToken = `Bearer ${token}`;
-
     const newUser = addUser(token, socket);
 
     const responsePayload = {
       loginResponse: {
         success: true,
-        message: '로그인 성공',
+        message: `로그인 성공_${id}`,
         token: bearerToken,
         failCode: GlobalFailCode.NONE,
       },

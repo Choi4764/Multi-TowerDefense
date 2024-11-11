@@ -51,10 +51,11 @@ class UserManager {
 
   // 매칭된 사용자 간 게임을 시작하는 함수
   startGame(user1, user2) {
-    matchNotification([user1, user2]);
-
-    // 두 사용자에게 JSON 형식으로 게임 시작 메시지 전송
-    console.log(`게임시작! ${user1} 과 ${user2}`);
+    setTimeout(() => {
+      matchNotification([user1, user2]);      
+      // 두 사용자에게 JSON 형식으로 게임 시작 메시지 전송
+      console.log(`게임시작! ${user1} 과 ${user2}`);
+    }, 1000);
   }
 
   // 매치 대기열에서 사용자를 제거하는 함수 (연결 종료 시 호출)

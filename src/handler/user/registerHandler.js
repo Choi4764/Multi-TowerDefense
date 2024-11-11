@@ -12,6 +12,7 @@ export const registerHandler = async (socket, payload) => {
       id: Joi.string().min(4).max(20).required(),
       password: Joi.string().min(8).max(20).required(),
       email: Joi.string().email().required(),
+      verifyPassword: Joi.string().required() 
     });
 
     const validation = schema.validate(payload.registerRequest);
@@ -38,11 +39,13 @@ export const registerHandler = async (socket, payload) => {
       return;
     }
 
-    const { id, password, email } = payload.registerRequest;
+    const { id, password, email, verifyPassword } = payload.registerRequest;
+
+    console.log("비밀번호 확인" + verifyPassword);
     const user = await findUserById(id);
     if (user) {
       // 같은 id를 갖고 있는 사용자가 있다면
-      console.error(errorMessage);
+      const errorMessage = console.error('중복 오류');
       const errorResponse = {
         registerResponse: {
           success: false,
@@ -83,6 +86,6 @@ export const registerHandler = async (socket, payload) => {
       ),
     );
   } catch (err) {
-    throw new Error(err);
+    console.error(err);
   }
 };

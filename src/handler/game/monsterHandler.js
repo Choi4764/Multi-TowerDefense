@@ -1,8 +1,6 @@
 import { Monster } from '../../classes/models/gameData.class.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../sessions/user.session.js';
-import CustomError from '../../utils/error/customError.js';
-import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { createRecord } from '../../db/record/record.db.js';
 import { verifyToken } from '../../middleware/authMiddleware.js';

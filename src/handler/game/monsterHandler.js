@@ -4,7 +4,7 @@ import { getUserBySocket } from '../../sessions/user.session.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { createRecord } from '../../db/record/record.db.js';
 import { verifyToken } from '../../middleware/authMiddleware.js';
-export const spawnMonsterHandler = async (socket, payload) => {
+export const spawnMonsterHandler = (socket, payload) => {
   try {
     const user = getUserBySocket(socket);
     const enemy = user.getEnemyUser();
@@ -73,7 +73,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
   }
 };
 
-export const enemyDeathNotificationHandler = async (socket, payload) => {
+export const enemyDeathNotificationHandler = (socket, payload) => {
   const { monsterId } = payload.monsterDeathNotification;
 
   const user = getUserBySocket(socket);

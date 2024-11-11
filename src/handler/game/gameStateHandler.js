@@ -7,7 +7,7 @@ import { removeGameSession } from '../../sessions/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
-export const matchHandler = async (socket, payload) => {
+export const matchHandler = (socket, payload) => {
   try {
     let user = getUserBySocket(socket);
     userManager.addToMatchQueue(user);
@@ -16,7 +16,7 @@ export const matchHandler = async (socket, payload) => {
   }
 };
 
-export const stateSyncNotification = async (user) => {
+export const stateSyncNotification = (user) => {
   try {
     user.getRandomMonsterLevelUp();    
     const { userGold, baseHp, monsterLevel, score, towers, monsters } = user.getGameData();

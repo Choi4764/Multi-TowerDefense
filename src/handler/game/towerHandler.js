@@ -4,7 +4,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../sessions/user.session.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
-export const towerPurchaseHandler = async (socket, payload) => {
+export const towerPurchaseHandler = (socket, payload) => {
   try {
     const user = getUserBySocket(socket);
     const enemy = user.getEnemyUser();

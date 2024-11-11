@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { matchNotification } from '../../handler/game/matchNotification.js';
 
 const matchQueue = []; // 매치 대기열을 관리하는 배열

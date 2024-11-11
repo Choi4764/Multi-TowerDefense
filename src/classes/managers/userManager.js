@@ -1,5 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import { matchNotification } from '../../handler/game/matchNotification.js';
+import { createResponse } from '../../utils/response/createResponse.js';
+import { PACKET_TYPE } from '../../constants/header.js';
 
 const matchQueue = []; // 매치 대기열을 관리하는 배열
 let matchCheckInterval = null; // 매칭 확인을 위한 인터벌 참조

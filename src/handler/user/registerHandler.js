@@ -12,7 +12,7 @@ export const registerHandler = async (socket, payload) => {
       id: Joi.string().min(4).max(20).required(),
       password: Joi.string().min(8).max(20).required(),
       email: Joi.string().email().required(),
-      verifyPassword: Joi.string().required() 
+      verifyPassword: Joi.string().required(),
     });
 
     const validation = schema.validate(payload.registerRequest);
@@ -29,19 +29,25 @@ export const registerHandler = async (socket, payload) => {
         },
       };
 
-      socket.write(
-        createResponse(
-          errorResponse,
-          PACKET_TYPE.REGISTER_RESPONSE,
-          0,
-        ),
-      );
+      socket.write(createResponse(errorResponse, PACKET_TYPE.REGISTER_RESPONSE, 0));
       return;
     }
 
     const { id, password, email, verifyPassword } = payload.registerRequest;
 
-    console.log("비밀번호 확인" + verifyPassword);
+    if (password !== verifyPassword) {
+      const errorMessage = '비밀번호 확인이 필요합니다.';
+      console.error(errorMessage);
+      const errorResponse = {
+        registerResponse: {
+          success: false,
+          message: errorMessage,
+          failCode: GlobalFailCode.AUTHENTICATION_FAILED,
+        },
+      };
+      socket.write(createResponse(errorResponse, PACKET_TYPE.REGISTER_RESPONSE, 0));
+    }
+
     const user = await findUserById(id);
     if (user) {
       // 같은 id를 갖고 있는 사용자가 있다면
@@ -54,13 +60,7 @@ export const registerHandler = async (socket, payload) => {
         },
       };
 
-      socket.write(
-        createResponse(
-          errorResponse,
-          PACKET_TYPE.REGISTER_RESPONSE,
-          0,
-        ),
-      );
+      socket.write(createResponse(errorResponse, PACKET_TYPE.REGISTER_RESPONSE, 0));
       return;
     }
 
@@ -78,13 +78,7 @@ export const registerHandler = async (socket, payload) => {
       },
     };
 
-    socket.write(
-      createResponse(
-        responsePayload,
-        PACKET_TYPE.REGISTER_RESPONSE,
-        0,
-      ),
-    );
+    socket.write(createResponse(responsePayload, PACKET_TYPE.REGISTER_RESPONSE, 0));
   } catch (err) {
     console.error(err);
   }

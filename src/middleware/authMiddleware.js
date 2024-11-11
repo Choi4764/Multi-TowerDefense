@@ -6,7 +6,7 @@ export function verifyToken(socket, token) {
     const decoded = jwt.verify(token, config.auth.key);
     return decoded;
   } catch (error) {
-    socket.write("Invalid or expired token");
+    socket.write('Invalid or expired token');
     throw new Error('Authentication failed');
   }
 }

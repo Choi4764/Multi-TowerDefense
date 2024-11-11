@@ -4,7 +4,8 @@ import { getUserBySocket } from '../../sessions/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { createResponse } from '../../utils/response/createResponse.js';
-
+import { createRecord } from '../../db/record/record.db.js';
+import { verifyToken } from '../../middleware/authMiddleware.js';
 export const spawnMonsterHandler = async (socket, payload) => {
   try {
     const user = getUserBySocket(socket);
@@ -39,9 +40,33 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, enemy.getNextSequence()));
 
     if (baseHp <= 0) {
-      const userResultPayload  = { gameOverNotification: { isWin: false } };
-      const enemyResultPayload  = { gameOverNotification: { isWin: true } };
-      
+      const userResultPayload = { gameOverNotification: { isWin: false } };
+      const enemyResultPayload = { gameOverNotification: { isWin: true } };
+
+      const user1 = user.id;
+      const user2 = enemy.id;
+      const userDecodedId = verifyToken(socket, user1);
+      const enemyUserDecodedId = verifyToken(socket, user2);
+      if (userResultPayload) {
+        await createRecord(userDecodedId.userId, enemyUserDecodedId.userId, `${userDecodedId.userId}:[lose]`, new Date());
+
+        await createRecord(
+          enemyUserDecodedId.userId,
+          userDecodedId.userId,
+          `${enemyUserDecodedId.userId}:[win]`,
+          new Date(),
+        );
+      } else if (!userResultPayload) {
+        await createRecord(userDecodedId.userId, enemyUserDecodedId.userId, `${userDecodedId.userId}:[win]`, new Date());
+
+        await createRecord(
+          enemyUserDecodedId.userId,
+          userDecodedId.userId,
+          `${enemyUserDecodedId.userId}:[lose]`,
+          new Date(),
+        );
+      }
+
       user.socket.write(createResponse(userResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, user.getNextSequence()));
       enemy?.socket.write(createResponse(enemyResultPayload, PACKET_TYPE.GAME_OVER_NOTIFICATION, enemy.getNextSequence()));
     }

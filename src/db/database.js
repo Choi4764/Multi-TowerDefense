@@ -37,6 +37,7 @@ const createPool = (dbConfig) => {
 const pools = {
   // GAME_DB: createPool(databases.GAME_DB),
   USER_DB: createPool(databases.USER_DB),
+  RECORD_DB: createPool(databases.RECORD_DB),
 };
 
 export default pools;

@@ -40,7 +40,7 @@ export const onData = (socket) => async (data) => {
       // console.log(`버전 : ${version}`);
       // console.log(`시퀀스: ${sequence}`);
       // console.log(`패킷길이: ${packetLength}`);
-      // console.log(`페이로드 : ${payload}`);           
+      // console.log(`페이로드 : ${payload}`);
       try {
         // 모든 패킷을 GamePacket으로 처리 가능
         const decodedPacket = GamePacket.decode(payload);
@@ -48,7 +48,6 @@ export const onData = (socket) => async (data) => {
         const handler = getProtoTypeNameByPacketType(packetType);
         if (handler) {
           await handler(socket, decodedPacket);
-
         }
       } catch (err) {
         console.error('패킷 처리 에러:', err);
@@ -60,5 +59,5 @@ export const onData = (socket) => async (data) => {
 };
 
 export const getPacketTypeName = (packetType) => {
-  return Object.keys(PACKET_TYPE).find(key => PACKET_TYPE[key] === packetType) || "Unknown packet type";
+  return Object.keys(PACKET_TYPE).find((key) => PACKET_TYPE[key] === packetType) || 'Unknown packet type';
 };

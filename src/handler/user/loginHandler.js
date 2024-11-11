@@ -71,7 +71,7 @@ export const loginHandler = async (socket, payload) => {
       },
     };
 
-    newUser.socket.write(
+      socket.write(
       createResponse(
         responsePayload,
         PACKET_TYPE.LOGIN_RESPONSE,

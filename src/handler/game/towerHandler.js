@@ -2,7 +2,6 @@ import { Tower } from '../../classes/models/gameData.class.js';
 import { initialState } from '../../classes/models/matchDummyData.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../sessions/user.session.js';
-import CustomError from '../../utils/error/customError.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
 export const towerPurchaseHandler = async (socket, payload) => {
@@ -14,7 +13,7 @@ export const towerPurchaseHandler = async (socket, payload) => {
     const gameData = user.getGameData();
     const { x, y } = payload.towerPurchaseRequest;
 
-    gameData.addUserGold(initialState.towerCost);
+    gameData.addUserGold(-initialState.towerCost);
     gameData.addTower(new Tower(towerIndex, x, y));
 
     const userPayload = { towerPurchaseResponse: { towerId: towerIndex } };

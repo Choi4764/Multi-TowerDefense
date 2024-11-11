@@ -1,7 +1,6 @@
 import { config } from "../../config/config.js";
 import { CLIENT_VERSION } from "../../constants/env.js";
 import { GamePacket } from "../../init/loadProtos.js";
-import { getNextSequence } from "../../sessions/user.session.js";
 
 const createHeader = (payloadLength, packetType, sequence) => {
     const { PACKET_TYPE_SIZE, VERSION_LENGTH_SIZE, SEQUENCE_SIZE, PAYLOAD_LENGTH_SIZE } =

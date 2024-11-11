@@ -1,5 +1,6 @@
 import { userSessions } from './sessions.js';
 import User from '../classes/models/user.class.js';
+import CustomError from '../utils/error/customError.js';
 
 export const addUser = (id, socket) => {
   const user = new User(id, socket);

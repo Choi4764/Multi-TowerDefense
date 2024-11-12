@@ -132,7 +132,8 @@ CREATE TABLE IF NOT EXISTS Record(
 # 프로젝트 구조
 
 ```
-📦assets
+📦Protect My Precious Fire Egg
+ ┣ 📂assets
  ┣ 📜monster.json
  ┣ 📜tower.json
  ┣ 📂src

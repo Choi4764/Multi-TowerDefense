@@ -129,6 +129,91 @@ CREATE TABLE IF NOT EXISTS Record(
 ## ![/image.png](image.png)
 
 ---
+# 프로젝트 구조
+
+```
+📦assets
+ ┣ 📜monster.json
+ ┣ 📜tower.json
+ ┣ 📂src
+ ┃ ┣ 📂classes
+ ┃ ┃ ┣ 📂managers
+ ┃ ┃ ┃ ┗ 📜userManager.js
+ ┃ ┃ ┗ 📂models
+ ┃ ┃ ┃ ┣ 📜game.class.js
+ ┃ ┃ ┃ ┣ 📜gameData.class.js
+ ┃ ┃ ┃ ┣ 📜matchDummyData.js
+ ┃ ┃ ┃ ┗ 📜user.class.js
+ ┃ ┣ 📂config
+ ┃ ┃ ┗ 📜config.js
+ ┃ ┣ 📂constants
+ ┃ ┃ ┣ 📜env.js
+ ┃ ┃ ┗ 📜header.js
+ ┃ ┣ 📂db
+ ┃ ┃ ┣ 📂migration
+ ┃ ┃ ┃ ┗ 📜createSchemas.js
+ ┃ ┃ ┣ 📂record
+ ┃ ┃ ┃ ┗ 📜record.db.js
+ ┃ ┃ ┣ 📂sql
+ ┃ ┃ ┃ ┣ 📜record_db.sql
+ ┃ ┃ ┃ ┗ 📜user_db.sql
+ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┗ 📜user.db.js
+ ┃ ┃ ┣ 📜database.js
+ ┃ ┃ ┗ 📜sql.queries.js
+ ┃ ┣ 📂events
+ ┃ ┃ ┣ 📜onConnection.js
+ ┃ ┃ ┣ 📜onData.js
+ ┃ ┃ ┣ 📜onEnd.js
+ ┃ ┃ ┗ 📜onError.js
+ ┃ ┣ 📂handler
+ ┃ ┃ ┣ 📂game
+ ┃ ┃ ┃ ┣ 📜gameStateHandler.js
+ ┃ ┃ ┃ ┣ 📜matchNotification.js
+ ┃ ┃ ┃ ┣ 📜monsterHandler.js
+ ┃ ┃ ┃ ┗ 📜towerHandler.js
+ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┣ 📜loginHandler.js
+ ┃ ┃ ┃ ┗ 📜registerHandler.js
+ ┃ ┃ ┗ 📜index.js
+ ┃ ┣ 📂init
+ ┃ ┃ ┣ 📜index.js
+ ┃ ┃ ┗ 📜loadProtos.js
+ ┃ ┣ 📂middleware
+ ┃ ┃ ┣ 📜authdHandler.js
+ ┃ ┃ ┗ 📜authMiddleware.js
+ ┃ ┣ 📂protobuf
+ ┃ ┃ ┗ 📜game.proto
+ ┃ ┣ 📂sessions
+ ┃ ┃ ┣ 📜game.session.js
+ ┃ ┃ ┣ 📜sessions.js
+ ┃ ┃ ┗ 📜user.session.js
+ ┃ ┣ 📂utils
+ ┃ ┃ ┣ 📂db
+ ┃ ┃ ┃ ┗ 📜testConnection.js
+ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┣ 📜customError.js
+ ┃ ┃ ┃ ┣ 📜errorCodes.js
+ ┃ ┃ ┃ ┗ 📜errorHandler.js
+ ┃ ┃ ┣ 📂parser
+ ┃ ┃ ┃ ┗ 📜packetParser.js
+ ┃ ┃ ┣ 📂response
+ ┃ ┃ ┃ ┗ 📜createResponse.js
+ ┃ ┃ ┣ 📜dateFormatter.js
+ ┃ ┃ ┣ 📜generateMonsterPath.js
+ ┃ ┃ ┗ 📜transformCase.js
+ ┃ ┗ 📜server.js
+ ┣ 📜.env
+ ┣ 📜.gitattributes
+ ┣ 📜.gitignore
+ ┣ 📜.prettierrc
+ ┣ 📜image.png
+ ┣ 📜package-lock.json
+ ┣ 📜package.json
+ ┗ 📜README.md
+```
+
+---
 
 # Server
 

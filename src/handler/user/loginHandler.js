@@ -74,7 +74,7 @@ export const loginHandler = async (socket, payload) => {
       createResponse(
         responsePayload,
         PACKET_TYPE.LOGIN_RESPONSE,
-        newUser.getNextSequence(),
+        0,
       ),
     );
   } catch (err) {

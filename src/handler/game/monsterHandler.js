@@ -4,6 +4,7 @@ import { getUserBySocket } from '../../sessions/user.session.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { createRecord } from '../../db/record/record.db.js';
 import { verifyToken } from '../../middleware/authMiddleware.js';
+import { stateSyncNotification } from './gameStateHandler.js';
 export const spawnMonsterHandler = (socket, payload) => {
   try {
     const user = getUserBySocket(socket);
@@ -83,6 +84,7 @@ export const enemyDeathNotificationHandler = (socket, payload) => {
   gameData.addUserGold(10);
   gameData.addScore(10);
   gameData.removeMonster(monsterId);
+  stateSyncNotification(user);
 
   const enemyPayload = { enemyMonsterDeathNotification: { monsterId } };
   enemy?.socket.write(createResponse(enemyPayload, PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION, enemy.getNextSequence()));

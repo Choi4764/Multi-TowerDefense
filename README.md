@@ -19,6 +19,11 @@
 
 ## 🧰 라이브러리
 
+
+<details>
+    
+  <summary><b>목록</b></summary>
+
 ```
 "bcrypt"
 "dotenv"
@@ -30,7 +35,10 @@
 "protobufjs"
 "redis"
 "uuid"
+
 ```
+
+</details>
 
 ---
 
@@ -190,13 +198,3 @@ CREATE TABLE IF NOT EXISTS Record(
 </details>
 
 
-
-
-
----
-
-# Server
-
----
-
-# Client
